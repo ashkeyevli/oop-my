@@ -1,0 +1,2 @@
+module midka {
+}

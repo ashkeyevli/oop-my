@@ -1,0 +1,352 @@
+package driver;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Vector;
+
+import system.*;
+import system.Course;
+import system.Database;
+import system.Faculty;
+import system.Order;
+import system.Textbook;
+import users.Manager;
+import users.Student;
+import users.Teacher;
+import users.TechGuy;
+
+public class TestClass {
+
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		Scanner sc = new Scanner(System.in);
+		PrintWriter pw = new PrintWriter(new OutputStreamWriter(System.out), true);
+		
+		
+		Student s = new Student("Student1", "qwerty");
+		Teacher t = new Teacher("Teacher", "12dgw");
+		Course c5 = new Course("ADS", 34);
+		
+		
+		s.registerForCourse(c5);
+		t.setCourses(c5);
+		
+		
+		while(true) {
+			Database.loadData();
+			pw.println("Please write login!");
+			String log = br.readLine();
+			pw.println("Please write OK!");
+			String ok = br.readLine();
+			if(log.equals("admin")) {
+				pw.println("Welcome back!");
+				while(true) {
+					pw.println("-------Options-------");
+					pw.println("1) Show the users");
+					pw.println("2) Add student");
+					pw.println("3) Add teacher");
+					pw.println("4) Add ORManager");
+					pw.println("5) Add TechGuy");
+					pw.println("q) Quit");
+					
+					String s1 = br.readLine();
+					String name = null, sur = null, login = null, pass = null;
+					
+					if(s1.equals("2") || s1.equals("3") || s1.equals("4") || s1.equals("5") || s1.equals("6")) {
+						pw.println("Input login of user:");
+						login = br.readLine();
+						pw.println("Input password of user:");
+						pass = br.readLine();
+						pw.println("Input name of user:");
+						name = br.readLine();
+						pw.println("Input surname of user:");
+						sur = br.readLine();
+					}
+					if(s1.equals("1")) {
+						System.out.println(Database.getUsers());
+		
+					}
+					else if(s1.equals("2")) {
+						Student st = new Student(login, pass);
+						st.name = name;
+						st.surname = sur;
+						Database.students.add(st);
+						System.out.println("Succesfully added Student");	
+						Database.saveData();
+					}
+					else if(s1.equals("3")) {
+						Teacher teach = new Teacher(login, pass);
+						teach.name = name;
+						teach.surname = sur;
+						Database.teachers.add(teach);
+						System.out.println("Successfully added Teacher");	
+						Database.saveData();
+					}
+					else if(s1.equals("4")) {
+						Manager m = new Manager(login, pass);
+						m.name = name;
+						m.surname = sur;
+						Database.managers.add(m);
+						System.out.println("Succesfully added Manager");	
+						Database.saveData();
+					}
+					else if(s1.equals("5")) {
+						TechGuy teach = new TechGuy(login, pass);
+						teach.name = name;
+						teach.surname = sur;
+						Database.techGuys.add(teach);
+						System.out.println("Successfully added Teacher");	
+						Database.saveData();
+					}else {
+						System.out.println("Bye-Bye");
+						break;
+					}
+				}
+			}else if (log.equals("student")) {
+				  while(true) {
+					    Student st = null;
+					    for (int i=0; i<Database.students.size(); i++)
+					      if (Database.students.get(i).login.equals(log)) {
+					        st=Database.students.get(i);
+					        break;
+					      }
+					  pw.println("1) Show the courses");
+					  pw.println("2) Information about the course");
+					  pw.println("3) Register to the course");
+					  pw.println("4) Show the mark of the course");
+					  pw.println("5) View transcripts");
+					  pw.println("q) Quit");
+					  
+					  String s1= br.readLine();
+					  if (s1.equals ("1")) {
+					    pw.println ();
+					    for (int i=0; i<Database.courses.size(); i++) {
+					      System.out.println(Database.courses.get(i).getCourseTitle());
+					    }
+					 
+					  }else if (s1.contentEquals("2")) {
+						  
+					  
+						  pw.println("Input name of Course: ");
+						  String ss=br.readLine();
+						  int cnt = -1;
+						  for(int i=0; i<st.courses.size(); i++) {
+							  if(st.courses.get(i).getCourseTitle() == ss) {
+								  cnt = i;
+							  break;
+							  }
+						  }
+						 pw.println(st.courses.get(cnt).toString());
+						 
+					  }
+					  else if (s1.equals("3")) {
+					  pw.println("Input name of Course:");
+					  String ss= br.readLine();
+					  System.out.println(ss);
+					  int cnt = 0;
+					  for(int i=0; i<Database.courses.size(); i++) {
+						  if(Database.courses.get(i).getCourseTitle() == ss) {
+							  cnt = i;
+						      break;
+						  }
+					  }
+					  st.registerForCourse(Database.courses.get(cnt));
+					  
+					  System.out.println ("Done!");
+					  
+			   }  else if (s1.contentEquals("4")) {
+						  pw.println("Input name of Course: ");
+						  String ss= br.readLine();
+						  int cnt = -1;
+						  for(int i=0; i<st.courses.size()-1; i++) {
+							  if(Database.courses.get(i).getCourseTitle() == ss) {
+								  cnt = i;
+							  break;
+							  }
+						  }
+						 pw.println(st.marks.get(st.courses.get(cnt)).getNumericValue());
+						 
+					  } else if(s1.equals("5")) {
+						  for (Map.Entry m:st.marks.entrySet()) { 
+					            pw.println(m.getKey()+" "+m.getValue()); 
+					        } 
+						  System.out.println("Done!");
+					  
+					  } else {
+							System.out.println("Bye");
+							break;
+						}
+		     }
+			}else if(log.equals("ORManager")) {
+				while(true) {
+					pw.println("-------Options-------");
+					pw.println("1) Show the courses");
+					pw.println("2) Add courses for registration");
+					pw.println("3) Send message to teachers");
+					pw.println("4) Info about students");
+					pw.println("5) Info about Teachers");
+					pw.println("q) Quit");
+					
+					String s1 = br.readLine();
+					if(s1.equals("1")) {
+						for(int i=0;i<Database.teachers.size();i++) {
+							System.out.println(Database.courses.get(i).getCourseTitle());
+						}
+					}
+					else if(s1.equals("2")) {
+						pw.println("Input name of the course:");
+						String ss = br.readLine();
+						pw.println("Input amount of credits of the course:");
+						int x = sc.nextInt();
+						Database.courses.add(new Course(ss, x));
+						System.out.println("Successfully added Course");
+						Database.saveData();
+					}else if(s1.equals("3")) {
+						pw.println("Input message for teacher:");
+						String ss = br.readLine();
+						pw.println("Choose teacher:");
+						for(int i=0;i<Database.teachers.size();i++) {
+							System.out.println(i+")" + Database.teachers.get(i).name);
+						}
+						int x = sc.nextInt();
+						Database.teachers.get(x).orders.add(ss);
+						System.out.println("Successfully added message");
+						Database.saveData();
+					}else if(s1.equals("4")) {
+						for(int i=0;i<Database.students.size();i++) {
+							System.out.println(Database.students.get(i));
+						}
+					}else if(s1.equals("5")) {
+						for(int i=0;i<Database.teachers.size();i++) {
+							System.out.println(Database.teachers.get(i));
+						}
+					}else {
+						System.out.println("Bye");
+						break;
+					}
+					
+				 }
+				
+				
+			}else if (log.equals("teacher")) {
+				while(true) {
+					TechGuy tc = null;
+					// Teacher t = null;
+					 /*   for (int i=0; i<Database.teachers.size(); i++)
+					      if (Database.teachers.get(i).login.equals(log)) {
+					        t=Database.teachers.get(i);
+					        break;
+					      }*/
+					pw.println("Choose what you want:");
+					pw.println("1) Add course");
+					pw.println("2) Add textbook");		
+					pw.println("3) Put mark");
+					pw.println("4) Send order to IT support guy");
+					pw.println("5) Show all courses");
+					pw.println("q) Quit");
+					
+					String s1 = br.readLine();
+					if(s1.equals("1")) {
+						pw.println("Input name of Course:");
+						String cn = br.readLine();
+						pw.println("Input amount of credits of the course:");
+						int numcr = sc.nextInt();
+						Course ncourse = new Course(cn, numcr);
+						t.setCourses(ncourse);
+					}
+					else if(s1.equals("2")) {
+						pw.println("Input title of the book");
+						String bt = br.readLine();
+						pw.println("Input author of the book");
+						Vector<String> v = new Vector<String>();
+						String ba = br.readLine();
+						v.add(ba);
+						pw.println("Input isbn of the book");
+						String is = br.readLine();
+						Textbook newtextBook = new Textbook(bt, is, v);
+						System.out.println("Textbook added!");
+					}
+					else if(s1.equals("3")) {
+						pw.println("Choose course:");
+						pw.println(t.courses.keySet());
+						String c = br.readLine();
+						
+						pw.println("Choose student:");
+						for(int i=1; i<=t.courses.get(c).size(); i++) {
+							pw.println(i + ")" + t.courses.get(c).get(i));
+						}
+						int n = sc.nextInt();
+						pw.println("Input mark of the student");
+						int m = sc.nextInt();
+						Course course = null;
+						course.courseTitle = c;
+						//t.courses.get(c).get(n).setMark(course, m);
+						System.out.println("Success!");
+						
+					}
+					else if(s1.equals("4")) {
+						pw.println("Input title of order:");
+						String o = br.readLine();
+						pw.println("Input location where your order have to be done:");
+						String l = br.readLine();
+						Order order = new Order(o,new java.util.Date(), l, false);
+						t.sendOrderToSupport(tc, order);
+						System.out.println("Success!");
+					}
+					else if(s1.equals("5")) {
+						pw.println(t.courses.keySet());
+					}
+					else {
+						System.out.println("Goodbye!");
+						break;
+					}
+					
+				}
+			}else if(log.equals("techSupport")) {
+				techGuy: while(true) {
+					pw.println("Choose what you want to do:");
+					pw.println("1) Show new orders");
+					pw.println("2) Show done and accepted orders");
+					pw.println("3) Accept order");
+					pw.println("4) Delete order");
+					pw.println("q) Quit");
+					String s1 = br.readLine();
+					if(s1.equals("1")) {
+						System.out.println("New orders:");
+						for(int i =0; i<TechGuy.orders.size(); i++) {
+							System.out.println(TechGuy.orders.get(i).toString());
+						}
+						continue techGuy;
+					}
+					else if(s1.equals("2")) {
+						System.out.println("Accepted orders:");
+						for(int i=0;i<Database.acceptedOrders.size();i++) {
+							System.out.println(Database.acceptedOrders.elementAt(i));
+						}
+						System.out.println("Done orders:");
+						for(int i=0;i<Database.doneOrders.size();i++) {
+							System.out.println(Database.doneOrders.elementAt(i));
+						}
+					}
+					else {
+						System.out.println("Goodbye!");
+						Database.saveData();
+						break;
+					}
+				}
+			
+			}else {
+				System.out.println("I don't know who you are");
+			}
+			
+			
+			
+		}
+	}
+}
